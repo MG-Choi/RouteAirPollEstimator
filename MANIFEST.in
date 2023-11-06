@@ -1,0 +1,6 @@
+recursive-include sampleData/AirPollutantSurface/fishnet_100m_4_16_07h.shp
+recursive-include sampleData/AirPollutantSurface/fishnet_100m_4_16_08h.shp
+recursive-include sampleData/AirPollutantSurface/fishnet_100m_4_16_09h.shp
+
+recursive-include sampleData/bicy_rental_loc/bicy_rental_loc.shp
+recursive-include sampleData/bicy_route/bicy_sim_7_09.shp

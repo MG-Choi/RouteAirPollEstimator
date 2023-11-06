@@ -1,0 +1,5 @@
+numpy
+pandas
+geopandas>=1.7
+tqdm
+shapely
