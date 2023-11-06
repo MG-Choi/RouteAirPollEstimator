@@ -1,5 +1,5 @@
 numpy
 pandas
-geopandas>=1.7
+geopandas>=0.14
 tqdm
 shapely

@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: RouteAirPollEstimator
-Version: 0.0.1
+Version: 0.0.2
 Summary: A library for estimating spatial-temporal air pollution exposure amounts by dividing routes.
 Home-page: https://github.com/MG-Choi/RouteAirPollEstimator
 Author: MoongiChoi

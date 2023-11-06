@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'RouteAirPollEstimator',
-    version = '0.0.1',
+    version = '0.0.2',
     description = "A library for estimating spatial-temporal air pollution exposure amounts by dividing routes.",
     url = 'https://github.com/MG-Choi/RouteAirPollEstimator',
     author = 'MoongiChoi',
@@ -10,7 +10,7 @@ setup(
     packages = find_packages(),
     package_data = {'RouteAirPollEstimator': ['sampleData/AirPollutantSurface/*', 'sampleData/bicy_rental_loc/*', 'sampleData/bicy_route/*']},
     include_package_data = True,
-    install_requires = ['numpy', 'pandas', 'geopandas >= 1.7', 'tqdm', 'shapely']
+    install_requires = ['numpy', 'pandas', 'geopandas>=0.14', 'tqdm', 'shapely']
 )
 
 
