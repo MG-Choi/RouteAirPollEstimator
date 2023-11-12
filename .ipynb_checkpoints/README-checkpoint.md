@@ -187,6 +187,9 @@ bicy_OD_5min[12:17]
 
 $$
 E_{\text{total}} = \sum_{i=1} E_i
+$$
+
+$$
 E_i = ST_{(h_i)} \cdot \text{duration}(S_i)
 $$
 
