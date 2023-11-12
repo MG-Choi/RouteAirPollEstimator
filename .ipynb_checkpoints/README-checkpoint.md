@@ -29,6 +29,7 @@ import RouteAirPollEstimator as rae
 </div>
 
 
+
 #### 1.1. merging surface data
 
 ###### The first step involves merging the surface data available in hourly increments into a single dataset. The formula is as follows.
@@ -79,7 +80,8 @@ data_h.head()
 <img src="/RouteAirPollEstimator/screenshot/fig_3_merged_fishnet.png" alt="Merged fishnet data" width="650"/>
 </div>
 
-###### Now, we have merged fishnet of air pollutant surface of 1 hour base. 
+###### Now, we have merged fishnet of air pollutant surface of 1 hour base.     
+
 
 
 
@@ -105,7 +107,10 @@ dust_7_9_5min.head()
 ###### The example above demonstrates the process of linearly interpolating the air pollutant surface between 7 and 9 a.m. at 5-minute intervals, then assigning it to respective columns to create space-time complete data. The resulting 'dust_7_9_5min' data will later be overlaid with the path files and used to calculate the amount of dust exposure along each route.
 
 
-### 2. Overlay spatiotemporal Air pollutant surface and bicycle routes
+
+
+
+### 2. Overlay spatiotemporal Air pollutant surface and bicycle routes    
 
 <div align="center">
 <img src="/RouteAirPollEstimator/screenshot/fig_7.png" alt="overlay spatiotemporal air pollutant surface and bicycle routes" width="650"/>
@@ -123,8 +128,10 @@ dust_7_9_5min.head()
 
 
 
-#### 2.1 convert bicycle OD to routes that composes of segment
 
+
+#### 2.1 convert bicycle OD to routes that composes of segment    
+ 
 $$
 S_i = \text{Segment}(O, D, t_{\text{start}} + i \cdot x)
 $$
@@ -168,18 +175,18 @@ bicy_OD_5min[12:17]
 ```
 
 ###### OD_Oid refers to the ID column of the ODdata that has the Origin rental location, matching the Loc_id in bicyLocPoints. OTime and DTime represent the columns that hold the departure and arrival times, respectively.
-###### The resulting dataframe (bicy_OD_5min) represents routes split into 5-minute intervals, where each route with a unique ID is segmented into multiple rows for each 5-minute interval. dur_new denotes the duration (in minutes) spent on each route segment.
+###### The resulting dataframe (bicy_OD_5min) represents routes split into 5-minute intervals, where each route with a unique ID is segmented into multiple rows for each 5-minute interval. dur_new denotes the duration (in minutes) spent on each route segment.    
 
 
 
-#### 2.2 Overlay spatiotemporal Air pollutant surface and bicycle routes
+ 
+
+#### 2.2 Overlay spatiotemporal Air pollutant surface and bicycle routes    
 
 ###### Finally, the total exposure amount on the route is calculated by finding the air pollutant surface values that spatially and temporally coincide with each segment.
 
 $$
 E_{\text{total}} = \sum_{i=1} E_i
-$$
-$$
 E_i = ST_{(h_i)} \cdot \text{duration}(S_i)
 $$
 
