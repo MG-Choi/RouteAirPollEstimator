@@ -8,6 +8,10 @@ RouteAirPollEstimator / version 0.0.2
 
 ```python
 !pip install RouteAirPollEstimator --upgrade
+
+import RouteAirPollEstimator as rae
+
+## make sure geopandas >= 0.14.0
 ```
 
 ## Usage (using sample simulation in library)
@@ -44,6 +48,12 @@ where
 
 
 
+``` python
 
+
+
+
+
+```
 
 
