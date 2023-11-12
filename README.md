@@ -34,13 +34,16 @@ $$
 
 where
 
-<i>ST<sub>(h,x)</sub></i> is the function defined for the given hour h and minute x.
-<i>C<sub>h</sub></i> is the air pollutant concentration at hour h.
-<i>C<sub>h+1</sub></i> is the air pollutant concentration at the hour following h.
-<i>x_<sub>min</sub></i> is the minute interval for temporal resolution.
+<i>ST<sub>(h,x)</sub></i> is the function defined for the given hour h and minute x.  
+<i>C<sub>h</sub></i> is the air pollutant concentration at hour h.  
+<i>C<sub>h+1</sub></i> is the air pollutant concentration at the hour following h.  
+<i>x_<sub>min</sub></i> is the minute interval for temporal resolution.  
 
 
-###### 선행적으로 가지고 있어야 할 데이터는 fishnet 형태의 shp파일로 저장된 cell단위의 air pollutant surface가 있어야 한다. 이 데이터는 한 시간단위로 저장이 되어있어야 한다.
+###### 선행적으로 가지고 있어야 할 데이터는 fishnet 형태의 shp파일로 저장된 cell단위의 air pollutant surface가 있어야 한다. 이 데이터는 한 시간단위로 저장이 되어있어야 한다. Names of fishnet dataset should follow this format: 'fishnet_[Month]_[Day]_[hour]h' (e.g., fishnet_4_16_7h, fishnet_4_16_8h)
+
+
+
 
 
 
