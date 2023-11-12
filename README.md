@@ -16,21 +16,22 @@ import RouteAirPollEstimator as rae
 
 ## Usage (using sample simulation in library)
 
-###### RouteAirPollEstimator는 ‘space-time complete air pollutant concentration surface’를 만들고, ~ 과정으로 되어있음. 이를 위해 선행적인 데이터들이 필요하며, 이 데이터들은 밑의 과정에서 sample data의 형태로 제공되었음.
+###### The RouteAirPollEstimator library creates a 'space-time complete air pollutant concentration surface' and involves the process of 'Overlaying spatiotemporal air pollutant surfaces with bicycle routes'. Preliminary data are required for this, and these data were provided in the form of sample data in the following process.
 
 
 ### 1. Preprocessing: generate space-time complete air pollutant concentration surface
 
-###### 다음과 같이 한시간 단위 (h)로 되어있는 t 시간동안의 krigged air pollutant surface를 x_min단위로 분할하여 space-time complete data로 만드는 과정을 의미한다.
+###### This refers to the process of dividing the kriged air pollutant surface, which is provided in hourly intervals (h), into x_min minute intervals to create space-time complete data over a period of t hours.
 
+
+<div align="center">
 <img src="/RouteAirPollEstimator/screenshot/fig_1.png" alt="Preprocessing(1): generate space-time complete air pollutant concentration surface" width="450"/>
-
-
+</div>
 
 
 #### 1.1. merging surface data
 
-###### 첫번쨰로는 한 시간 단위의 surface data를 하나로 합쳐주는 과정을 가진다. 수식은 다음과 같다.
+###### The first step involves merging the surface data available in hourly increments into a single dataset. The formula is as follows.
 
 $$
 ST_{(h,x)} = C_h + \left( \frac{C_{h+1} - C_h}{60} \right) \cdot x_{\text{min}}
@@ -44,16 +45,70 @@ where
 <i>x_<sub>min</sub></i> is the minute interval for temporal resolution.  
 
 
-###### 선행적으로 가지고 있어야 할 데이터는 fishnet 형태의 shp파일로 저장된 cell단위의 air pollutant surface가 있어야 한다. 이 데이터는 한 시간단위로 저장이 되어있어야 한다. Names of fishnet dataset should follow this format: 'fishnet_[Month]_[Day]_[hour]h' (e.g., fishnet_4_16_7h, fishnet_4_16_8h)
-
+###### The preliminary data required should consist of air pollutant surface data stored in cell units within a fishnet-patterned shapefile (shp). This data must be saved in hourly increments. The naming convention for the fishnet dataset should follow the format: 'fishnet_[Month][Day][hour]h' (e.g., fishnet_4_16_7h, fishnet_4_16_8h). In this library, the work proceeds using the sample data provided.
 
 
 ``` python
+fishnet_4_16_7h, fishnet_4_16_8h, fishnet_4_16_9h = rae.fishnet_4_16_7h, rae.fishnet_4_16_8h, rae.fishnet_4_16_9h
 
-
-
-
-
+fishnet_4_16_7h.sample(5)
 ```
 
+<div align="center">
+<img src="/RouteAirPollEstimator/screenshot/fig_2_fishnet_sample.png" alt="Sample data of fishnet" width="650"/>
+</div>
 
+
+###### The columns we will use to merge process are 'Id' (the unique identifier for each cell), 'RASTERVALU' (the PM10 value for each cell), and 'geometry' (information on the polygon geometry).
+
+
+``` python
+data_h = rae.process_and_merge_dataframes(start_hour = 7, end_hour = 9, Pollutant_column = 'RASTERVALU', date = '2023_4_16')
+
+data_h.head()
+```
+
+<div align="center">
+<img src="/RouteAirPollEstimator/screenshot/fig_3_merged_fishnet.png" alt="Merged fishnet data" width="650"/>
+</div>
+
+###### Now, we have merged fishnet of air pollutant surface of 1 hour base. 
+
+
+
+#### 1.2. Divide the air pollutant concentration surface into x-minute intervals
+
+###### Now, based on the x minutes input by the user, the surface is linearly interpolated at x minute intervals to form time-space complete data. The equation is as follows.
+
+
+
+
+
+###### T
+
+
+
+
+
+
+$$
+S_i = \text{Segment}(O, D, t_{\text{start}} + i \cdot x)
+$$
+
+where
+<i>O</i> is Origin (= bicycle rental place)
+<i>D</i> is Destination
+ 
+
+
+where
+
+$$
+E_{\text{total}} = \sum_{i=1} E_i
+$$
+$$
+E_i = ST_{(h_i)} \cdot \text{duration}(S_i)
+$$
+
+<i>S<sub>i</sub></i> is <i>i<sup>th</sup></i> segment in route <i>S</i>
+<i>duration(S<sub>i</sub>)</i> equals x
