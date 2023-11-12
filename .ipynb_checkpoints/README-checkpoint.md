@@ -65,14 +65,13 @@ fishnet_4_16_7h.sample(5)
 ``` python
 data_h = rae.process_and_merge_dataframes(start_hour = 7, end_hour = 9, Pollutant_column = 'RASTERVALU', date = '2023_4_16')
 
+``` 
+    # start_hour : start time of the data
+    # end_hour : end time of the data
+    # Pollutant_column : Column name of air pollution concentration
+    # date : date of the data (format: [YYYY]_[MM]_[DD]) that user wants to add.
+    # (should be the same name of input data. For example, if the data name is 'fishnet_4_16_7h', date should be '4_16' / if 'fishnet_04_16_7h, '04_16'.)
 ```
-    start_hour : start time of the data
-    end_hour : end time of the data
-    Pollutant_column : Column name of air pollution concentration
-    date : date of the data (format: [YYYY]_[MM]_[DD]) that user wants to add.
-    (should be the same name of input data. For example, if the data name is 'fishnet_4_16_7h', date should be '4_16' / if 'fishnet_04_16_7h, '04_16'.)
-```
-
 data_h.head()
 ```
 
@@ -92,13 +91,10 @@ data_h.head()
 dust_7_9_5min = rae.minuteIntervals_surface(data_h, hourRange = [7,9], minuteInterval = 5)
 
 ```
-    data_h : data from previous stage (funtion: process_and_merge_dataframes)
-    hourRange : List that specify the start hour and end hour (e.g., [7,9] if 7 to 9)
-    minuteInterval : the minute interval for the time resolution (e.g., 5: 5minute intervals)
-    
+    # data_h : data from previous stage (funtion: process_and_merge_dataframes)
+    # hourRange : List that specify the start hour and end hour (e.g., [7,9] if 7 to 9)
+    # minuteInterval : the minute interval for the time resolution (e.g., 5: 5minute intervals)
 ```
-
-
 dust_7_9_5min.head()
 ```
 <div align="center">
@@ -106,14 +102,25 @@ dust_7_9_5min.head()
 </div>
 
 
-###### 위 예시에서는 7~9시 사이의 air pollutant surface를 5분 간격으로 선형 보간한 후, 이를 각각의 컬럼에 할당하여 space-time complete data를 만드는 과정을 보여주고 있다. 이제 만들어진 'dust_7_9_5min'데이터는 추후 경로 파일과 overlay되며 각 경로상에서의 dust exposure양을 구할 때 사용된다.
+###### The example above demonstrates the process of linearly interpolating the air pollutant surface between 7 and 9 a.m. at 5-minute intervals, then assigning it to respective columns to create space-time complete data. The resulting 'dust_7_9_5min' data will later be overlaid with the path files and used to calculate the amount of dust exposure along each route.
 
 
 ### 2. Overlay spatiotemporal Air pollutant surface and bicycle routes
 
 <div align="center">
+<img src="/RouteAirPollEstimator/screenshot/fig_7.png" alt="overlay spatiotemporal air pollutant surface and bicycle routes" width="650"/>
+</div>
+
+
+<div align="center">
 <img src="/RouteAirPollEstimator/screenshot/fig_5_sudocode_overlay.png" alt="pseudo code for overlay" width="650"/>
 </div>
+
+###### <i>S</i> represents the route, and <i>j</i> denotes each agent. The starting point <i>O</i> is designated as the closer end of each route, which determines the direction of the route.
+###### <i>N</i> becomes the number of segments resulting from dividing the Total duration <i>T</i> by <i>x</i> minutes.
+###### Subsequently, a repetition operation from <i>i</i> to <i>N</i> occurs, where <i>Segment start</i> and <i>Segment end</i> are determined using the start time, <i>x</i>, and end time, respectively.
+###### For each segment, the <i>ST</i> (air pollutant value from the space-time complete surface) at each time <i>h</i> and <i>x</i> minutes is calculated, and this <i>ST</i> is added to the total Exposure amount (<i>E<sub>total</sub></i>) for each agent's route.
+
 
 
 #### 2.1 convert bicycle OD to routes that composes of segment
@@ -122,28 +129,27 @@ $$
 S_i = \text{Segment}(O, D, t_{\text{start}} + i \cdot x)
 $$
 
-where
+where  
+
 <i>O</i> is Origin (= bicycle rental place)  
 <i>D</i> is Destination  
 
 
-###### 여기서는 1) bicycle자체의 OD정보 및 path line을 가지고 있는 polyline gdf파일과 2) rental location의 Origin과 Destination 포인트 정보를 가지고 있는 gdf 파일이 필요하다. 1)의 경우 rae패키지에서 'bicy_OD_4_16_7_9'의 variable로 제공하며, 2)는 bicy_rental_loc의 variable이다. 이 과정에서는 user가 x minute (코드에서는 minuteInterval)을 넣어주면 각 route를 x minute을 단위로 하여 split한다.
-
+###### Here, two GeoDataFrame (gdf) files are needed: 1) a polyline gdf with the bicycle's own OD (origin-destination) information and path line, and 2) a gdf file with the Origin and Destination point information for rental locations. The former is provided as the variable 'bicy_OD_4_16_7_9' in the rae package, and the latter as the variable 'bicy_rental_loc'. During this process, when the user inputs x minutes (referred to as minuteInterval in the code), each route is split into x minute intervals.
 
 ``` python
 bicy_OD_5min = rae.process_gdf(ODdata = rae.bicy_OD_4_16_7_9, OD_Oid = 'o_cd', OTime = 'o_time', DTime = 'd_time',
                            bicyLocPoints = rae.bicy_rental_loc, Loc_id = 'sta_id', minuteInterval = 5)
 
 ```
-    ODdata : Bicycle Origin-Destination table that consists of Origin and Destinaton columns. Don't have to be shp, but need key columns of ID that matches with rental location ID
-    OD_Oid : A column of starting location ID. It should match with rental location ID.
-    OTime : A column of O Time. Format of this should be '%Y-%m-%d %H:%M:%S' (e.g., 2023-04-16 08:13:02)
-    DTime : A column of D Time. Format of this should be '%Y-%m-%d %H:%M:%S' (e.g., 2023-04-16 08:13:02)
-    bicyLocPoints : A table of bicycle rental location point data. It should be the point shp file that has 'geometry' column.
-    Loc_id : A key column of rental location point ID which matches with OD_Oid
-    minuteInterval : time interval of the result point-route data. Need to be the same value of 'minuteInterval' parameter in minuteIntervals_surface function.
+    # ODdata : Bicycle Origin-Destination table that consists of Origin and Destinaton columns. Don't have to be shp, but need key columns of ID that matches with rental location ID
+    # OD_Oid : A column of starting location ID. It should match with rental location ID.
+    # OTime : A column of O Time. Format of this should be '%Y-%m-%d %H:%M:%S' (e.g., 2023-04-16 08:13:02)
+    # DTime : A column of D Time. Format of this should be '%Y-%m-%d %H:%M:%S' (e.g., 2023-04-16 08:13:02)
+    # bicyLocPoints : A table of bicycle rental location point data. It should be the point shp file that has 'geometry' column.
+    # Loc_id : A key column of rental location point ID which matches with OD_Oid
+    # minuteInterval : time interval of the result point-route data. Need to be the same value of 'minuteInterval' parameter in minuteIntervals_surface function.
 ```
-
 bicy_OD_5min[12:17]
 ```
 <div align="center">
@@ -151,23 +157,24 @@ bicy_OD_5min[12:17]
 </div>
 
 ```
-o_time, d_time: origin, destination time
-o_cd: origin location id
-o_nm: origin location name
-d_cd: destination location id
-d_nm: destination location name
-distRe: distance (m)
-durRe: duration (minutes)
+<columns>
+- o_time, d_time: origin, destination time
+- o_cd: origin location id
+- o_nm: origin location name
+- d_cd: destination location id
+- d_nm: destination location name
+- distRe: distance (m)
+- durRe: duration (minutes)
 ```
 
-###### OD_Oid는 Origin rental location을 가지고 있는 ODdata의 ID 컬럼을 의미 (bicyLocPoints의 Loc_id와 일치). OTime과 DTime은 각각 출발 시간, 도착 시간을 가지는 컬럼을 의미한다.
-###### 결과 df (bicy_OD_5min)는 결국 5분 단위로 split된 routes를 의미하며, 각 uniqID별 route가 5분단위로 잘려 multiple한 row들로 나누어 진 것을 확인할 수 있따. dur_new는 각 route에서 머문 시간 (분)을 의미한다.
+###### OD_Oid refers to the ID column of the ODdata that has the Origin rental location, matching the Loc_id in bicyLocPoints. OTime and DTime represent the columns that hold the departure and arrival times, respectively.
+###### The resulting dataframe (bicy_OD_5min) represents routes split into 5-minute intervals, where each route with a unique ID is segmented into multiple rows for each 5-minute interval. dur_new denotes the duration (in minutes) spent on each route segment.
 
 
 
+#### 2.2 Overlay spatiotemporal Air pollutant surface and bicycle routes
 
-
-
+###### Finally, the total exposure amount on the route is calculated by finding the air pollutant surface values that spatially and temporally coincide with each segment.
 
 $$
 E_{\text{total}} = \sum_{i=1} E_i
@@ -176,7 +183,42 @@ $$
 E_i = ST_{(h_i)} \cdot \text{duration}(S_i)
 $$
 
-where
+where  
 
 <i>S<sub>i</sub></i> is <i>i<sup>th</sup></i> segment in route <i>S</i>  
 <i>duration(S<sub>i</sub>)</i> equals x  
+
+
+###### <i>E<sub>total</sub></i> represents the total amount of exposure to air pollution, calculated by summing the product of the <i>ST<sub>hi</sub></i>, which is the exposure amount for every <i>i</i>th segment, and the <i>duration S<sub>i</sub></i>, which is the time spent on each segment.
+
+
+
+``` python
+exposure_5min_7_9_gdf = rae.calculate_dust_exposure(ODdata = bicy_OD_5min, OTime = 'o_time', DTime = 'd_time', spatioTemporalSurface = dust_7_9_5min)
+
+```
+    # ODdata : Result gdf of the previous funtion (process_gdf), which have point route info
+    # OTime : A column of O Time. Format of this should be '%Y-%m-%d %H:%M:%S' (e.g., 2023-04-16 08:13:02)
+    # DTime : A column of D Time. Format of this should be '%Y-%m-%d %H:%M:%S' (e.g., 2023-04-16 08:13:02)
+    # spatioTemporalSurface : The result gdf of minuteIntervals_surface function, which has spatiotemporal air pollutant surface.
+```
+exposure_5min_7_9_gdf.head()
+```
+
+<div align="center">
+<img src="/RouteAirPollEstimator/screenshot/fig_8_result.png" alt="Result" width="650"/>
+</div>
+
+
+###### The term dust_con represents the constant exposure amount of dust at each vertex, while dust_exp refers to the total exposure amount of dust along the route. Ultimately, dust_exp is calculated by multiplying dust_con by the duration time dur_new (note that since dur_new is in minutes, it is converted to seconds before multiplying).
+
+
+---
+
+## Related Document: 
+ will be added
+
+## Author
+
+- **Author:** Moongi Choi, Won Do Lee
+- **Email:** u1316663@utah.edu
