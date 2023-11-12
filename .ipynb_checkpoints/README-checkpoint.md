@@ -32,6 +32,8 @@ $$
 ST_{(h,x)} = C_h + \left( \frac{C_{h+1} - C_h}{60} \right) \cdot x_{\text{min}}
 $$
 
+where
+
 <i>ST<sub>(h,x)</sub></i> is the function defined for the given hour h and minute x.
 <i>C<sub>h</sub></i> is the air pollutant concentration at hour h.
 <i>C<sub>h+1</sub></i> is the air pollutant concentration at the hour following h.
