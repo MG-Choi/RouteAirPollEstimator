@@ -32,7 +32,7 @@ $$
 ST_{(h,x)} = C_h + \left( \frac{C_{h+1} - C_h}{60} \right) \cdot x_{\text{min}}
 $$
 
-$$ST_{(h,x)}$$ is the function defined for the given hour h and minute x.
+##### $$ST_{(h,x)}$$ is the function defined for the given hour h and minute x.
 $$C_h$$ is the air pollutant concentration at hour h.
 $$C_{h+1}$$ is the air pollutant concentration at the hour following h.
 $$x_{\text{min}}$$ is the minute interval for temporal resolution.
