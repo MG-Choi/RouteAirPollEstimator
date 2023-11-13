@@ -223,6 +223,11 @@ exposure_5min_7_9_gdf.head()
 ###### The term dust_con represents the constant exposure amount of dust at each vertex, while dust_exp refers to the total exposure amount of dust along the route. Ultimately, dust_exp is calculated by multiplying dust_con by the duration time dur_new (note that since dur_new is in minutes, it is converted to seconds before multiplying).
 
 
+<div align="center">
+<img src="/RouteAirPollEstimator/screenshot/fig_9_map.png" alt="Visualization" width="650"/>
+</div>
+
+
 ---
 
 ## Related Document: 
